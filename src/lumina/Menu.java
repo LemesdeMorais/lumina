@@ -182,7 +182,7 @@ public class Menu {
 
 		        
 		        
-		        java.time.Duration duracao = java.time.Duration.ofHours(horas).plusMinutes(minutos);;
+		        Duration duracao = java.time.Duration.ofHours(horas).plusMinutes(minutos);
 
 		        Audiobook ab = new Audiobook(idGerado, nome, categoria, autor, preco, duracao);
 	
@@ -256,7 +256,7 @@ public class Menu {
 
 	        if (!entrada.isEmpty()) {
 	            try {
-	                // aceita vírgula como separador decimal
+
 	                float novoPreco = Float.parseFloat(entrada.replace(',', '.'));
 	                livro.setPreco(novoPreco);
 	            } catch (NumberFormatException e) {
@@ -264,7 +264,7 @@ public class Menu {
 	            }
 	        }
 
-	        // OPCIONAL: atualizar estoque apenas para Livro Físico (categoria 2)
+
 	        if (livro.getCategoria() == 2) {
 	            System.out.printf("Estoque Atual: %d%nNovo Estoque (ENTER para manter): ", livro.getEstoque());
 	            String inEstoque = leia.nextLine().trim();
@@ -282,7 +282,7 @@ public class Menu {
 	            }
 	        }
 
-	        // grava a alteração
+
 	        livroController.atualizar(livro);
 
 	    } else {
