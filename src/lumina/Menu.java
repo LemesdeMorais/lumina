@@ -60,7 +60,7 @@ public class Menu {
 			System.out.println("\n Lumina - Sua varinha é um livro, sua magia é o conhecimento!");
 			leia.close();
 			System.exit(0);
-			}else if(op >= 10 || op < 0 ) {
+			}else if(op >= 11 || op < 0 ) {
 				System.out.println("\n Opção inválida! Tente novamente.");
 				}
 		}catch (InputMismatchException e) {
@@ -112,10 +112,12 @@ public class Menu {
 			break;
 			
 			case 9: System.out.println("Registrar venda de Livro");
+			registrarVenda();
 			keyPress();
 			break;
 			
-			case 10: System.out.println("Historico de Vendas");
+			case 10: 
+			listarHistoricoVendas();
 			keyPress();
 			break;
 
@@ -234,7 +236,7 @@ public class Menu {
 			}
 
 		} else {
-			System.out.printf("\nA conta número %d não foi encontrada!", livro);
+			System.out.printf("\nO Livro ID %d não foi encontrado!", id);
 		}
 	}
 	
@@ -320,8 +322,43 @@ public class Menu {
 
 	}
 	
+	private static void registrarVenda() {
+		try {
+		System.out.print("ID do Livro: ");
+        int id = leia.nextInt();
+
+        System.out.print("Quantidade: ");
+        int qtd = leia.nextInt();
+        leia.nextLine(); 
+
+        if (qtd <= 0) {
+            System.out.println("Quantidade deve ser maior que zero.");
+            return;
+        }
+
+        boolean ok = livroController.registrarVenda(id, qtd);
+
+
+
+        if (!ok) {
+            System.out.println("Venda não realizada.");
+        }
+        
+	    } catch (InputMismatchException e) {
+	        System.out.println("Entrada inválida. Digite números inteiros.");
+	        leia.nextLine(); 
+	    }
+	}
+	
+	public static void listarHistoricoVendas() {
+	    livroController.historico(0);
+}
+	
+}
+	
+
 	
 	
 
 	
-}
+

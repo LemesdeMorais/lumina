@@ -5,11 +5,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import lumina.model.Livros;
+import lumina.model.Venda;
 import lumina.repository.LivroRepository;
 
 public class LivroController implements LivroRepository{
 	
 	private List<Livros> listarLivros = new ArrayList<Livros>();
+	private final List<Venda> historico = new ArrayList<>();
+	private int seqVenda = 0;
 	int id = 0;
 	private String nome;
 
@@ -134,21 +137,82 @@ public class LivroController implements LivroRepository{
 	@Override
 	public void qntEstoque(int estoque) {
 		
+		if (estoque < 0) {
+	        System.out.println("\nQuantidade inválida.");
+	        return;
+	    }
+	    int atualizados = 0;
+	    for (Livros l : listarLivros) {
+	        if (l.getCategoria() == 2) {
+	            l.setEstoque(estoque);
+	            atualizados++;
+	        }
+	    }
+	    System.out.printf("\nEstoque definido para %d em %d livro(s) físico(s).%n", estoque, atualizados);
+		
 		
 		
 	}
 
 	@Override
-	public void venda(int venda) {
-		// TODO Auto-generated method stub
-		
+	public void venda(int idLivro) {
+	    final int quantidade = 1; // vendendo 1 unidade por padrão
+
+	    Livros l = buscarNaCollection(idLivro);
+	    if (l == null) {
+	        System.out.printf("\nLivro ID %d não encontrado.%n", idLivro);
+	        return;
+	    }
+
+	    if (l.getCategoria() == 2) {
+	        if (l.getEstoque() < quantidade) {
+	            System.out.printf("\nEstoque insuficiente. Atual: %d | Solicitado: %d%n",
+	                    l.getEstoque(), quantidade);
+	            return;
+	        }
+	        l.setEstoque(l.getEstoque() - quantidade);           // baixa do estoque
+	        listarLivros.set(listarLivros.indexOf(l), l);         // persiste a alteração
+	    }
+
+	    Venda v = new Venda(++seqVenda, l.getId(), l.getNome(), quantidade, l.getPreco());
+		historico.add(v);
+	    System.out.println("\nVenda registrada com sucesso!");
+	    v.visualizar();
 	}
 
-	@Override
-	public void historico(int historico) {
-		// TODO Auto-generated method stub
-		
+	
+	public boolean registrarVenda(int idLivro, int quantidade) {
+	    if (quantidade <= 0) {
+	        System.out.println("\nQuantidade deve ser maior que zero.");
+	        return false;
+	    }
+
+	    Livros l = buscarNaCollection(idLivro);
+	    if (l == null) {
+	        System.out.printf("\nLivro ID %d não encontrado.%n", idLivro);
+	        return false;
+	    }
+
+	  
+	    if (l.getCategoria() == 2) {
+	        if (l.getEstoque() < quantidade) {
+	            System.out.printf("\nEstoque insuficiente. Atual: %d | Solicitado: %d%n",
+	                    l.getEstoque(), quantidade);
+	            return false;
+	        }
+	        l.setEstoque(l.getEstoque() - quantidade);      
+	        listarLivros.set(listarLivros.indexOf(l), l);      
+	    }
+
+	    Venda v = new Venda(++seqVenda, l.getId(), l.getNome(), quantidade, l.getPreco());
+	    historico.add(v);
+
+	    System.out.println("\nVenda registrada com sucesso!");
+	    v.visualizar();
+	    return true;
 	}
+		
+	
 	
 	public int gerarId() {
 		return ++id;
@@ -162,6 +226,24 @@ public class LivroController implements LivroRepository{
 		}
 	}
 	return null;
+	}
+
+	@Override
+	public void historico (int historico) {
+		
+		if (this.historico == null || this.historico.isEmpty()) {
+	        System.out.println("\nAinda não há vendas registradas.");
+	        return;
+	    }
+
+	    float soma = 0f;
+	    System.out.println("**************** HISTÓRICO DE VENDAS****************");
+	    for (Venda v : this.historico) {
+	        v.visualizar();
+	        soma += v.getTotal();
+	    }
+	    System.out.printf("\nTOTAL FATURADO: R$ %.2f%n", soma);
+		
 	}
 	
 }
