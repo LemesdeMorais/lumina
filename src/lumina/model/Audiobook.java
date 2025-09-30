@@ -23,7 +23,7 @@ public class Audiobook extends Livros{
 	public void visualizar() {
         super.visualizar();
         long h = duracao.toHours();
-        long m = duracao.toMinutesPart(); // JDK 9+
+        long m = duracao.toMinutesPart();
         long s = duracao.toSecondsPart();
         System.out.printf("Duração do Audiobook: %02d:%02d:%02d%n", h, m, s);
 	}

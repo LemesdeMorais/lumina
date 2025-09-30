@@ -11,7 +11,7 @@ public interface LivroRepository {
 	public void procurarPorId(int id);
 	public void deletar(int id);
 	public void listarPorTitulo(String titulo);
-	public void listarPorCategoria(String categoria);
+	public void listarPorCategoria(int categoria);
 	public void listarPorAutor(String autor);
 	
 	//Metodos da Livraria
